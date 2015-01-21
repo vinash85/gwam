@@ -1,4 +1,6 @@
 # 5000 differetional genes
+library(data.table)
+library(avinash)
 load("~/shortcuts/Data/MikeData/MAGnet_combat_eset.Rdata")
 require(Biobase)
 require(BiocGenerics)
@@ -38,7 +40,7 @@ exp.diff.donor = expression.diff[expression.annot$disease.p==1,]
 load("/fs/sh-project/Projects/Cardio/Data/MikeData/MAGnet_eQTL_impute/genotype1.RData")
 genotype.sample = rownames(genotype)
 genotype = genotype[colnames(expressions),]
-source("lasso.eqtl.R")
+source("/cbcbhomes/vinash85/project/gwam/R/lasso.eqtl.R")
 exp.diff.donor = expression.diff[expression.annot$disease.p==1,]
 genotype.donor = genotype[expression.annot$disease.p==1,]
 donor.eqtl = lasso.EQTL(x=genotype.donor, y=t(exp.diff.donor), threads=64)

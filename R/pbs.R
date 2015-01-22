@@ -43,9 +43,9 @@ genotype = genotype[colnames(expressions),]
 source("/cbcbhomes/vinash85/project/gwam/R/lasso.eqtl.R")
 exp.diff.donor = expression.diff[expression.annot$disease.p==1,]
 genotype.donor = genotype[expression.annot$disease.p==1,]
-donor.eqtl = lasso.EQTL(x=genotype.donor, y=t(exp.diff.donor), threads=64)
+donor.eqtl = lasso.EQTL(x=genotype.donor, y=exp.diff.donor, nthreads=1)
 
 exp.diff.disease = expression.diff[expression.annot$disease.p==2,]
 genotype.disease = genotype[expression.annot$disease.p==2,]
-disease.eqtl = lasso.EQTL(x=genotype.disease, y=t(exp.diff.disease), threads=64)
+disease.eqtl = lasso.EQTL(x=genotype.disease, y=exp.diff.disease, nthreads=1)
 save(file="eqtls.RData", donor.eqtl, disease.eqtl)

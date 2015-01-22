@@ -8,8 +8,8 @@ lasso.EQTL <- function (x, y, gene.map=NULL, nthreads = 1)
   if(is.null(gene.map)){
     genes <- seq(ncol(y))
     coefs <- foreach(gene = genes, .inorder = T) %dopar% {
-      fit <- cv.glmnet(x = x, y = y[, gene], alpha = 1,
-                       parallel = F)
+      fit <- cv.glmnet(x = x, y = y[, gene], alpha = 0.5,
+                       parallel = T)
       coef = coef(fit, s = "lambda.min")
       coef = coef[coef[,1]!=0,]
       coef

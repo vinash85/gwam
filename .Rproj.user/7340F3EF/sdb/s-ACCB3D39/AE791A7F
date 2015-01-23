@@ -1,12 +1,12 @@
 {
-    "contents" : "lasso.EQTL <- function (x, y, gene.map=NULL, nthreads = 1)\n{   \n  require(glmnet)\n  require(doMC)\n  require(foreach)\n  registerDoMC(cores = nthreads)\n  n <- nrow(x)\n  if(is.null(gene.map)){\n    genes <- seq(ncol(y))\n    coefs <- foreach(gene = genes, .inorder = T) %dopar% {\n      fit <- cv.glmnet(x = x, y = y[, gene], alpha = 1,\n                       parallel = F)\n      coef = coef(fit, s = \"lambda.min\")\n      coef = coef[coef[,1]!=0,]\n      coef\n    }\n#     coefs <- list()\n#   for(gene in genes) {\n#       fit <- cv.glmnet(x = x, y = y[, gene], alpha = 1,\n#                        parallel = F)\n#       coef = coef(fit, s = \"lambda.min\")\n#       coef = coef[coef[,1]!=0,]\n#       coefs[[gene]] = coef\n#     } \n  }else{\n  genes <- unique(gene.map)\n  coefs <- foreach(gene = genes, .inorder = T) %dopar% {\n    curr.inx <- which(gene.map == gene)\n    fit <- cv.glmnet(x = x[, curr.inx],  y = y[, gene], alpha = 0.5, nfolds=20,\n                     parallel = T)\n    coef = coef(fit, s = \"lambda.min\")\n    coef <- coef[-1]\n    coef\n  }\n \n  }\n  coefs\n}",
+    "contents" : "lasso.EQTL <- function (x, y, gene.map=NULL, nthreads = 1)\n{   \n  require(glmnet)\n  require(doMC)\n  require(foreach)\n  registerDoMC(cores = nthreads)\n  n <- nrow(x)\n  if(is.null(gene.map)){\n    genes <- seq(ncol(y))\n    coefs <- foreach(gene = genes, .inorder = T) %dopar% {\n      fit <- cv.glmnet(x = x, y = y[, gene], alpha = 0.5,\n                       parallel = T)\n      coef = coef(fit, s = \"lambda.min\")\n      coef = coef[coef[,1]!=0,]\n      coef\n    }\n#     coefs <- list()\n#   for(gene in genes) {\n#       fit <- cv.glmnet(x = x, y = y[, gene], alpha = 1,\n#                        parallel = F)\n#       coef = coef(fit, s = \"lambda.min\")\n#       coef = coef[coef[,1]!=0,]\n#       coefs[[gene]] = coef\n#     } \n  }else{\n  genes <- unique(gene.map)\n  coefs <- foreach(gene = genes, .inorder = T) %dopar% {\n    curr.inx <- which(gene.map == gene)\n    fit <- cv.glmnet(x = x[, curr.inx],  y = y[, gene], alpha = 0.5, nfolds=20,\n                     parallel = T)\n    coef = coef(fit, s = \"lambda.min\")\n    coef <- coef[-1]\n    coef\n  }\n \n  }\n  coefs\n}\n",
     "created" : 1421819435638.000,
     "dirty" : false,
     "encoding" : "UTF-8",
     "folds" : "",
-    "hash" : "2825266877",
+    "hash" : "1828813489",
     "id" : "AE791A7F",
-    "lastKnownWriteTime" : 1421834694,
+    "lastKnownWriteTime" : 1421951317,
     "path" : "~/project/gwam/gwam/R/lasso.eqtl.R",
     "project_path" : "R/lasso.eqtl.R",
     "properties" : {

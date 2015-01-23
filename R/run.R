@@ -66,16 +66,10 @@ impute = function(tt) {
 	tt[is.na(tt)] = mm
 	tt
 	}
-	impute - function(tt) {
-	mm = mean(tt, na.rm=T)
-	tt[is.na(tt)] = mm
-	tt
 
 genotype.nona = apply(genotype[,1:10],2,impute )
 genotype.nona = matrix(genotype.nona, nrow=313, byrow=F)
 aa = lasso.EQTL(x=genotype.nona, y=t(expressions[1:9,]))
- 
-
 
 ##################################################################
 # convert expression to log. 

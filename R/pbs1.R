@@ -1,7 +1,3 @@
-#################################
-#Differential gene expression by limma
-#################################
-
 # 5000 differetional genes
 library(data.table)
 library(avinash)
@@ -41,48 +37,26 @@ topGene <- topGene[topGene$adj.P.Val < 1e-5,] # 6670 genes with adj p.value  < 1
 ##################################################################
 expression.diff = t(expressions[rownames(topGene),])
 exp.diff.donor = expression.diff[expression.annot$disease.p==1,]
-load("/fs/sh-project/Projects/Cardio/Data/MikeData/MAGnet_eQTL_impute/genotype1.RData")
-genotype.sample = rownames(genotype)
-genotype = genotype[colnames(expressions),]
-genotype.donor = genotyp
-genotype.exp = genotype[,1:100]
-genotype.exp = genotype.exp[colnames(expressions),]
-aa = lasso.EQTL(x=genotype.exp, y=t(expressions[1:10,]))
-# alternativly only genotyped SNPs  
-
 load("/fs/sh-project/Projects/Cardio/Data/MikeData/magnet_PedTraits.RData")
 snpcol = grep(colnames(pedtrait), pattern="SNP")
 setkey(pedtrait, sample_name)
 genotype=pedtrait[colnames(expressions)]
 genotype=as.matrix(genotype[, snpcol, with=F])
 source("/cbcbhomes/vinash85/project/gwam/R/lasso.eqtl.R")
-genotype.nona = sapply(t(genotype[,1:10]), function(tt) {
-	mm = mean(tt, na.rm=T)
-	tt[is.na(tt)] = mm
-	tt
-	})
 impute = function(tt) {
 	mm = mean(tt, na.rm=T)
 	tt[is.na(tt)] = mm
 	tt
 	}
-	impute - function(tt) {
-	mm = mean(tt, na.rm=T)
-	tt[is.na(tt)] = mm
-	tt
 
-genotype.nona = apply(genotype[,1:10],2,impute )
-genotype.nona = matrix(genotype.nona, nrow=313, byrow=F)
-aa = lasso.EQTL(x=genotype.nona, y=t(expressions[1:9,]))
- 
+genotype = apply(genotype,2,impute )
+genotype = matrix(genotype, nrow=313, byrow=F)
+source("/cbcbhomes/vinash85/project/gwam/R/lasso.eqtl.R")
+exp.diff.donor = expression.diff[expression.annot$disease.p==1,]
+genotype.donor = genotype[expression.annot$disease.p==1,]
+donor.eqtl = lasso.EQTL(x=genotype.donor, y=exp.diff.donor, nthreads=32)
 
-
-##################################################################
-# convert expression to log. 
-#Use peer to remove SNPs along with major "factors" explaing the expression variance (separtely in donors and HF)
-##################################################################
-
-#################################
-# combine the effect for donors and HF and find residual
-# Run eQTeL on 2000 genes. With estiamted alpha run 3000 genes separately.
-#################################
+exp.diff.disease = expression.diff[expression.annot$disease.p==2,]
+genotype.disease = genotype[expression.annot$disease.p==2,]
+disease.eqtl = lasso.EQTL(x=genotype.disease, y=exp.diff.disease, nthreads=32)
+save(file="eqtls.RData", donor.eqtl, disease.eqtl)
